@@ -1,0 +1,61 @@
+Sql 로그 좀 더 깔끔하게 출력하기
+
+src/main/java/com.spring.jpa 경로에
+P6SpySqlFormatter 클래스 생성
+내용 붙여넣기
+
+yml로 이동
+jpa:
+	properties:
+부분 전부 주석처리
+
+
+JPA에서는 update문은 따로 메서드를 지원하지 않음
+update 하고 싶은 데이터를 조회 후에 setter 메서드를 통해 값을 변경해주고
+다시 save를 호출하면 자동으로 update를 실행.
+
+
+
+com.spring.jpa.chap02_querymethod.entity 패키지 생성
+Student 클래스 생성
+@Entity
+@Table 지정
+
+@EqualsAndHashCode(of = "id")
+문자열 같은 값의 동등 비교를 위해 equals 메서드를 자동으로 추가해주는 롬복 어노테이션
+of 옵션을 사용하면 해당 값만 비교해서 동등 여부를 판단
+2개 이상의 값을 주려면 (of = {"값1", "값2"}) 형태로 작성
+
+com.spring.jpa.chap02_querymethod.repository 패키지 생성
+StudentRepository 인터페이스 생성
+extends JpaRepository
+Ctrl + Shift + T 테스트 생성
+여러가지 테스트 해보기
+
+클래스 자동 import 설정
+설정 - 에디터 - 일반 - 자동 가져오기 - 모호하지 않은 import 문 즉시 추가 체크 - 적용 - 확인
+
+
+
+메서드명을 통해 자동으로 쿼리를 생성하는 쿼리 메서드 사용하기
+기본 제공되는 findById와 다른 쿼리문을 실행하고 싶을때 사용(직접 지정하고 싶을때)
+
+Native-SQL -> DB에 테이블이 기준
+JPQL -> 엔터티 클래스가 기준
+
+JPQL의 장점 : 테이블 구조를 몰라도 작성 가능 (자바 객체만으로 작성 가능하기 때문에)
+
+JPQL을 이용한 페이징 처리
+Pageable 임포트 할 때 주의
+org.springframework.data.domain 패키지의 인터페이스 타입
+
+
+
+Optional 객체의 orElseThrow(함수) 메서드
+findById의 결과가 널이라면 예외를 생성해주는 메서드
+매개값을 없이 주면 알아서 적절한 예외를 생성
+매개값을 함수로 전해주면 원하는 예외를 생성 가능
+해당 메서드를 사용하면 결과값을 Optional 타입이 아니라 객체 자체로 받을 수 있음
+(널이 발생하면 자동으로 예외 처리되므로)
+
+

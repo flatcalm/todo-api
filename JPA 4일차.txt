@@ -1,0 +1,80 @@
+게시물 상세보기
+Ctrl + Alt + T
+코드로 둘러싸기
+(if, try-catch, for문 등등으로 감쌀 때 매우 편리)
+
+
+값을 받을때
+클라이언트 단에서 자바스크립트로 작성된 데이터를 제이슨으로 변환해서 받으므로
+@RequestBody를 통해 자바로 변환해줘야함
+
+입력값 검증 라이브러리 추가
+메이븐 레파지토리 - Spring boot starter validation - gradle(short) - 복사
+build.gradle - dependencies 안에 붙여넣기 - 코끼리 버튼 눌러 리로드
+버튼이 뜨지 않을 때는 우측 그래들 메뉴(코끼리 아이콘)를 눌러 모든 Gradle 프로젝트 다시 로드(새로고침 아이콘) 실행
+
+입력값 검증 어노테이션 추가
+DTO에서 원하는 검증 어노테이션을 추가하고 컨트롤러 단에서도 @Validated 어노테이션을 추가해줘야함
+또한 검증 에러 시 정보를 담아줄 객체 BindingResult를 같이 선언해줘야 함.
+
+
+게시글 작성
+메서드의 매개변수에 final을 붙여주면 전달받은 값을 메서드 내에서 수정할 수 없음(변경 불가).
+DTO를 엔터티로 변환해줄 때 값을 잘 체크해야 함
+DTO에는 엔터티(DB 테이블)에 존재하지 않는 값도 포함하므로 잘 구분해서 데이터를 넣어줘야함.
+엔터티(테이블)이 포함하지 않는 값은 따로 저장해야함.
+JPA의 레파지토리는 엔티티 밖에 받지 않음. extends 문에 <제너릭1, 제너릭2>에 엔티티를 받는다고 선언했기 때문에.
+
+포스트맨으로 게시글 등록 요청 보내기
+요청 생성
+Post 방식 - http://localhost:8181/api/v1/posts
+Body - raw - JSON
+내용 입력
+
+메서드화 하고 싶은 부분 드래그 후 Ctrl + Alt + M
+드래그 한 부분을 메서드화
+
+DELET 할 때 주의할 점
+외래키가 있는 데이터를 삭제할때 에러를 방지하기 위해 테이블을 직접 생성할 때 on delete cascade를 작성해주거나 
+N쪽 엔티티 @ManyToOne 어노테이션에 cascade 속성을 추가해주고 1쪽 엔티티 @OneToMany 어노테이션에 orphanRemoval 속성을 추가
+@ManyToOne(cascade = CascadeType.ALL) REMOVE도 가능
+@OneToMany(orphanRemoval = true)
+
+
+메이븐 레파지토리 - springdoc-openapi - 1.6.9 - Gradle(short) - 복사
+build.gradle - dependencies - 안에 붙여넣기 - 리로드
+
+swagger api 작성
+
+
+todo 프로젝트 작성
+start.spring.io
+Project - Gradle - Groovy
+Language - Java
+Spring Boot - 2.7.12
+Project Metadata - Artifact - todo
+Packaging - Jar
+Java - 11
+Dependencies
+	Lombok
+	Spring Web
+	MySQL Driver
+	Spring Data JPA
+	Spring Boot DevTools - 변화를 감지하면 서버를 자동으로 재시작
+
+GENERATE CTRL + ⏎
+
+build.gradle dependencies 추가 작성 및 리로드
+application.properties -> application.yml로 변경
+.gitignore 맨위 README.md 제거
+HELP.md -> README.md
+
+Spring Boot DevTools 설정
+Ctrl + Alt + S (설정)
+빌드, 실행, 배포 - 컴파일러 - 프로젝트 자동 빌드 체크
+고급 설정 - 컴파일러 - 개발된 애플리케이션이 현재 실행 중인 경우에도 auto-make가 시작되도록 허용 체크
+롬복 사용을 위해 어노테이션 처리 활성화 체크 (설정)
+
+새 프로젝트 커밋하기
+상단 VCS (버전 관리) - Git 저장소 생성 - 프로젝트 선택 - 확인
+Git - GitHub - GitHub에 프로젝트 공유 - 저장소 이름 작성 - 비공개 체크 해제 - 공유 - 파일 확인 후 추가
