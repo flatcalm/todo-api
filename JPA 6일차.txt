@@ -1,0 +1,34 @@
+유저 서비스 작성
+드래그 후 Ctrl + Alt + V
+여러번 쓰이는 메서드 등을 자동으로 변수 선언
+
+유저 서비스 테스트
+assertThrows(p1, p2)
+에러가 발생할 것임을 단언하는 메서드
+p1 : 어떤 에러가 발생할 지 단언할 에러 클래스
+p2 : 에러가 발생하는 상황을 함수 형태로 전달
+
+
+스프링 부트에서 외부 라이브러리 빈 등록 하기
+스프링 레거시와 달리 스프링 부트에서는 외부 라이브러리를 등록할 때 xml 파일 사용 X
+대신 클래스를 사용
+@Configuration 어노테이션, @Bean 어노테이션 사용
+직접 만든 클래스를 빈 등록을 할때는 @Service @Component 등을 사용하지만
+외부 라이브러리를 등록할때는 @Bean 사용
+
+SpringSecurity 설정
+WebSecurityConfig 클래스로 이동
+@Configuration 주석 처리
+@EnableWebSecurity 어노테이션 등록
+@EnableWebSecurity 어노테이션에 @Configuration을 포함하고 있기 때문에 @Configuration 어노테이션은 주석 처리
+
+
+VS Code로 이동
+RouterDom 사용하기
+
+React에 어울리지 않는 새로고침 현상을 방지하기 위해 Link 태그 사용하기
+<Link to='경로'>태그 내용</Link>
+렌더링은 a 태그로 렌더링 (스타일도 a 태그로 적용하면 됌)
+
+
+useState로 관리되는 배열이나 객체는 배열이나 객체 자체를 통째로 갈아줘야함.
