@@ -19,6 +19,9 @@ logging.level:
   org.hibernate.SQL: debug
 
 # swagger setting
-springdoc:
+spring-doc:
   swagger-ui:
     path: /myapi.html
+
+jwt:
+  secret: RHnMgCgigH9zS8wvNuSoP/pUfGSqSbarlk+5ku+xPWvESIaisvOlIubaUCbDvUVko66n7NSJprsMdpj28YGEKQ==
