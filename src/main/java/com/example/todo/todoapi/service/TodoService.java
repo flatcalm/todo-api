@@ -55,14 +55,14 @@ public class TodoService {
     }
 
     // 할 일 삭제
-    public TodoListResponseDTO delete(final String todoId) {
+    public TodoListResponseDTO delete(final String todoId, final String userId) {
         try {
             todoRepository.deleteById(todoId);
         } catch (Exception e) {
             log.error("id가 존재하지 않아 삭제에 실패했습니다. - ID : {}, err : {}", todoId, e.getMessage());
             throw new RuntimeException("id가 존재하지 않아 삭제에 실패했습니다.");
         }
-        return retrieve("");
+        return retrieve(userId);
     }
 
     // 할 일 등록
@@ -77,7 +77,7 @@ public class TodoService {
         return retrieve(userId);
     }
 
-    public TodoListResponseDTO update(final TodoModifyRequestDTO requestDTO) throws RuntimeException {
+    public TodoListResponseDTO update(final TodoModifyRequestDTO requestDTO, final String userId) throws RuntimeException {
         /* 내가 한거
         Todo todo = todoRepository.findById(requestDTO.getId()).orElseThrow();
 
@@ -96,6 +96,6 @@ public class TodoService {
             todoRepository.save(entity);
         });
 
-        return retrieve("");
+        return retrieve(userId);
     }
 }
