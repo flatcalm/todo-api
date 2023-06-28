@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
@@ -42,8 +43,12 @@ public class UserController {
     // 회원 가입 요청 처리
     // POST : /api/auth
     @PostMapping
-    public ResponseEntity<?> signup(@Validated @RequestBody UserRequestSignUpDTO dto, BindingResult result) {
-        log.info("/api/auth POST - {}", dto);
+    public ResponseEntity<?> signup(@Validated @RequestPart("user") UserRequestSignUpDTO dto,
+                                    // 파일이 여러 개라면 List<MultipartFile>로 받음.
+                                    // required의 기본 설정이 true이기 때문에 따로 설정해줘야 사용자가 이미지 파일을 첨부하지 않았을 때 에러가 안 터짐
+                                    @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
+                                    BindingResult result
+    ) {
 
         if(result.hasErrors()) {
             log.warn(result.toString());
@@ -52,7 +57,15 @@ public class UserController {
         }
 
         try {
-            UserResponseSignUpDTO responseDTO = userService.create(dto);
+
+            String uploadedFilePath = null;
+            log.info("/api/auth POST - {}", dto);
+            if(profileImg != null) {
+                log.info("attached file name : {}", profileImg.getResource());
+                uploadedFilePath = userService.uploadProfileImage(profileImg);
+            }
+
+            UserResponseSignUpDTO responseDTO = userService.create(dto, uploadedFilePath);
             return ResponseEntity.ok().body(responseDTO);
         } catch (NoRegisteredArgumentsException e) {
             log.warn("필수 가입 정보를 전달 받지 못했습니다.");
@@ -62,6 +75,10 @@ public class UserController {
             log.warn("이메일이 중복되었습니다.");
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
+        } catch (Exception e) {
+            log.warn("기타 예외가 발생했습니다.");
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
 
     }

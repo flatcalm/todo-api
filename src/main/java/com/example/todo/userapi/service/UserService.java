@@ -13,8 +13,14 @@ import com.example.todo.userapi.entity.User;
 import com.example.todo.userapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -24,9 +30,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final TokenProvider tokenProvider;
+    @Value("${upload.path}")
+    private String uploadRootPath;
 
     // 회원 가입 처리
-    public UserResponseSignUpDTO create(final UserRequestSignUpDTO dto) {
+    public UserResponseSignUpDTO create(
+            final UserRequestSignUpDTO dto, final String uploadedFilePath)
+            throws RuntimeException {
 
         String email = dto.getEmail();
 
@@ -34,7 +44,7 @@ public class UserService {
             throw new NoRegisteredArgumentsException("가입 정보가 없습니다.");
         }
 
-        if(userRepository.existsByEmail(email)) {
+        if(isDuplicate(email)) {
             log.warn("이메일이 중복되었습니다. - {}", email);
             throw new DuplicatedEmailException("중복된 이메일 입니다.");
         }
@@ -44,7 +54,7 @@ public class UserService {
         dto.setPassword(encoded);
 
         // 유저 엔터티로 변환
-        User user = dto.toEntity();
+        User user = dto.toEntity(uploadedFilePath);
 
         User saved = userRepository.save(user);
 
@@ -86,7 +96,8 @@ public class UserService {
     }
 
     // 프리미엄으로 등급 업
-    public LoginResponseDTO promoteToPremium(TokenUserInfo userInfo) {
+    public LoginResponseDTO promoteToPremium(TokenUserInfo userInfo)
+            throws NoRegisteredArgumentsException, IllegalStateException {
 
         User foundUser = userRepository.findById(userInfo.getUserId()).orElseThrow(() -> new NoRegisteredArgumentsException("회원 조회에 실패!"));
 
@@ -104,4 +115,27 @@ public class UserService {
 
         return new LoginResponseDTO(saved, token);
     }
+
+    /**
+     * 업로드된 파일을 서버에 저장하고 저장 경로를 리턴
+     * @param originalFile - 업로드 된 파일의 정보
+     * @return 실제로 저장된 이미지 경로
+     */
+    public String uploadProfileImage(MultipartFile originalFile) throws IOException {
+
+        // 루트 디렉토리가 존재하는 지 확인 후 존재하지 않으면 생성
+        File rootDir = new File(uploadRootPath);
+        if(!rootDir.exists()) rootDir.mkdir();
+
+        // 파일명을 유니크하게 변경
+        String uniqueFileName = UUID.randomUUID() + "_" + originalFile.getOriginalFilename();
+
+        // 파일을 저장
+        File uploadFile = new File(uploadRootPath + "/" + uniqueFileName);
+        originalFile.transferTo(uploadFile);
+
+        return uniqueFileName;
+
+    }
+
 }
